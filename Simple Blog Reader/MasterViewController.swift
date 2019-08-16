@@ -16,6 +16,27 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //A value that identifies the location of a resource, such as an item on a remote server or the path to a local file | Google Blog API
+        let url = URL(string: )!
+        //An object that coordinates a group of related network data transfer tasks
+        let task = URLSession.shared.dataTask(with: url) {
+            
+            (data, response, error) in
+            //Conditional construction methods for log error
+            if error != nil {
+                
+                print(error!)
+                
+            } else {
+                
+                if let urlContent = data {
+                    
+                    print(urlContent)
+                }
+            }
+        }
+        
+        task.resume()
     }
     
     
