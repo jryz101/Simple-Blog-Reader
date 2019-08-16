@@ -42,6 +42,46 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                         //Cast the jsonResult as NSArray using the Optional Binding methods
                         if let items = jsonResult["items"] as? [[String: Any]] {
                             
+                            //The managed object context used to fetch objects
+                            let context = self.fetchedResultsController.managedObjectContext
+                            
+                            //A description of search criteria used to retrieve data from a persistent store.
+                            let request = NSFetchRequest<Event>(entityName: "Event")
+                            
+                            do {
+                                //Returns an array of objects that meet the criteria specified by a given fetch request.
+                                let results = try context.fetch(request)
+                                
+                                //Conditional methods to check the results.count is greater than 0
+                                if results.count > 0 {
+                                    
+                                    //For in loop methods for loop through the results and delete the old result data
+                                    for result in results {
+                                        
+                                        context.delete(result)
+                                        
+                                        //Do try catch construction methods for save the update data
+                                        do {
+                                            
+                                            try context.save()
+                                            
+                                        } catch {
+                                            
+                                            print("Specific delete failed")
+                                            
+                                        }
+                                    }
+                                }
+                                
+                            } catch {
+                                
+                                print("Delete failed")
+                                
+                            }
+                                
+                                
+                                
+                            
                             //Loop through the items object using the for in loop
                             for item in items {
                                 
@@ -51,7 +91,6 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                                 
                                 print(item["content"]!)
                                 
-                                let context = self.fetchedResultsController.managedObjectContext
                                 let newEvent = Event(context: context)
                                 
                                 // If appropriate, configure the new managed object.
@@ -165,7 +204,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
 
     func configureCell(_ cell: UITableViewCell, withEvent event: Event) {
-        cell.textLabel!.text = event.timestamp!.description
+        cell.textLabel!.text = event.value(forKey: "title") as? String
     }
     
     
