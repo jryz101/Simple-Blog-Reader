@@ -17,7 +17,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         super.viewDidLoad()
         
         //A value that identifies the location of a resource, such as an item on a remote server or the path to a local file | Google Blog API
-        let url = URL(string:  )!
+        let url = URL(string: )!
         //An object that coordinates a group of related network data transfer tasks
         let task = URLSession.shared.dataTask(with: url) {
             
@@ -35,18 +35,49 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                     do {
                         
                         //An object that converts between JSON and the equivalent Foundation objects
-                        let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers) as AnyObject
+                        let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers) as! [String: Any]
                         
                         print(jsonResult)
                         
                         //Cast the jsonResult as NSArray using the Optional Binding methods
-                        if let items = jsonResult["items"] as? NSArray {
+                        if let items = jsonResult["items"] as? [[String: Any]] {
                             
                             //Loop through the items object using the for in loop
                             for item in items {
                                 
-                                print(item)
+                                print(item["published"]!)
                                 
+                                print(item["title"]!)
+                                
+                                print(item["content"]!)
+                                
+                                let context = self.fetchedResultsController.managedObjectContext
+                                let newEvent = Event(context: context)
+                                
+                                // If appropriate, configure the new managed object.
+                                newEvent.timestamp = Date()
+                                
+                                //Sets the property of the receiver specified by a given key to a given value
+                                newEvent.setValue(item["published"] as! String, forKey: "published")
+                                newEvent.setValue(item["title"] as! String, forKey: "title")
+                                newEvent.setValue(item["content"] as! String, forKey: "content")
+                                
+                                // Save the context.
+                                do {
+                                    try context.save()
+                                } catch {
+                                    // Replace this implementation with code to handle the error appropriately.
+                                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                                    let nserror = error as NSError
+                                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                                }
+                                
+                            }
+                            //DispatchQueue manages the execution of work items. Each work item submitted to a queue is processed on a pool of threads managed by the system
+                            DispatchQueue.main.async {
+                                
+                                //Call reload data
+                                self.tableView.reloadData()
                             }
                             
                         }
