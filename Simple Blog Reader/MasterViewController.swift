@@ -17,7 +17,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         super.viewDidLoad()
         
         //A value that identifies the location of a resource, such as an item on a remote server or the path to a local file | Google Blog API
-        let url = URL(string: )!
+        let url = URL(string:  )!
         //An object that coordinates a group of related network data transfer tasks
         let task = URLSession.shared.dataTask(with: url) {
             
@@ -35,13 +35,25 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                     do {
                         
                         //An object that converts between JSON and the equivalent Foundation objects
-                        let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers)
+                        let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers) as AnyObject
                         
                         print(jsonResult)
                         
+                        //Cast the jsonResult as NSArray using the Optional Binding methods
+                        if let items = jsonResult["items"] as? NSArray {
+                            
+                            //Loop through the items object using the for in loop
+                            for item in items {
+                                
+                                print(item)
+                                
+                            }
+                            
+                        }
+                        
                     } catch {
                         
-                        print("Json Processing Failed")
+                        print("JSON Processing Failed")
                         
                     }
                 }
