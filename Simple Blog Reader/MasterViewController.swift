@@ -31,11 +31,24 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
                 
                 if let urlContent = data {
                     
-                    print(urlContent)
+                    //Do try catch block for processing Json data
+                    do {
+                        
+                        //An object that converts between JSON and the equivalent Foundation objects
+                        let jsonResult = try JSONSerialization.jsonObject(with: urlContent, options: JSONSerialization.ReadingOptions.mutableContainers)
+                        
+                        print(jsonResult)
+                        
+                    } catch {
+                        
+                        print("Json Processing Failed")
+                        
+                    }
                 }
             }
         }
         
+        //Newly-initialized tasks begin in a suspended state, so you need to call this method to start the task
         task.resume()
     }
     
